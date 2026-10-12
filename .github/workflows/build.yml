@@ -15,11 +15,12 @@ jobs:
       - name: Check out project
         uses: actions/checkout@v6
 
-      - name: Check out CommonLibF4
+      - name: Check out CommonLibF4 and dependencies
         uses: actions/checkout@v6
         with:
           repository: libxse/commonlibf4
           path: lib/commonlibf4
+          submodules: recursive
 
       - name: Set up XMake
         uses: xmake-io/github-action-setup-xmake@v1
@@ -38,4 +39,3 @@ jobs:
           name: PeekOnly-Windows-x64
           path: build/**/PeekOnly.dll
           if-no-files-found: error
-
