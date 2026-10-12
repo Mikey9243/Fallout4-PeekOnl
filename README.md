@@ -30,13 +30,15 @@ Edit `Data/F4SE/Plugins/PeekOnly.ini` (or Vortex's mod staging copy) and redeplo
 - `DetectDistance`, `FullDistance`: forward wall range in game units.
 - `SideProbe`: lateral corner test offset.
 - `CameraOffset`: maximum lateral view movement; default 90. Lower it if the shift is too large or clips into scenery, or raise it if the camera ray leaves room.
+- `CameraTilt`: roll toward the peeking side in degrees; default 7, limited to -20 through 20. Set it to 0 to disable or a negative value to reverse the lean direction.
 - `FadeIn`, `FadeOut`: smoothing speeds.
 - `Aim`, `Left`, `Right`: decimal Win32 virtual-key values (defaults: right mouse 2, A 65, D 68).
 
 ## Current limitations
 
-This plugin moves the camera only; it does not reproduce weapon yaw/cant, camera roll, or MCM. The new 90-unit default has not yet been verified in a fresh in-game session. The supplied earlier gameplay clip shows the existing variant in action according to the user, and their feedback was that it needed a larger peek. Disable the mod in Vortex if the camera behaves unexpectedly.
+This plugin moves and rolls the camera only; it does not animate the character's body or reproduce the source mod's weapon yaw/cant or MCM. The 90-unit default has been confirmed working by the user. The new camera tilt needs an in-game check. Disable the mod in Vortex if the camera behaves unexpectedly.
 
 ## Build
 
 The repository's Windows GitHub Actions workflow builds with XMake/CommonLibF4 and packages a Vortex ZIP. Source is independent and clean-room; the original archive is not redistributed.
+
