@@ -1,17 +1,41 @@
-# Fallout4-PeekOnl — independent peek plugin prototype
+# PeekOnly (private-use prototype)
 
-This repository contains a clean-room prototype for a standalone Fallout 4 F4SE peek plugin. It does not include the Bodycam DLL or its assets.
+An independently written F4SE plugin for Fallout 4 Old-Gen 1.10.163. It does not include or load the Bodycam mod's DLL, assets, scripts, or configuration. It currently implements a camera-only corner peek prototype: while aiming in first person near a detected corner, it shifts the camera laterally toward the clearer side. Pressing the configured movement key toward the wall suppresses the peek.
 
-## Current status
+## Requirements
 
-**Not a working or installable mod yet.** The plugin currently logs initialization only. The camera hook, corner and collision probes, input handling, transform application, INI parsing, in-game validation, and Vortex package are still outstanding. This first commit prepares the source/build pipeline and does not provide playable peek behavior.
+- Fallout 4 1.10.163 (pre-next-gen)
+- F4SE 0.6.23 for runtime 1.10.163
+- Address Library for F4SE Plugins, version matching 1.10.163
+- x64 Microsoft Visual C++ runtime, if not already installed
 
-Target runtime: Fallout 4 1.10.163 with F4SE 0.6.23. Planned build: CommonLibF4 with XMake on a Windows GitHub Actions runner. CommonLibF4 is GPL-3.0-or-later with modding/linking exceptions; comply with its corresponding-source terms before distributing linked binaries.
+No ESP/ESL, Papyrus, MCM, Creation Kit, or Bodycam installation is required.
 
-## Build pipeline
+## Install with Vortex
 
-The Windows plugin build workflow is configured to run on pushes to `main` or by manual dispatch. It compiles a prototype DLL and uploads it as a GitHub Actions artifact. That DLL is only a build milestone until the actual runtime feature is implemented.
+1. Download `PeekOnly-Vortex.zip` from the build artifact/release.
+2. In Vortex, choose **Install From File** and select the ZIP.
+3. Enable **PeekOnly** and deploy mods.
+4. Confirm the files resolve as `Data/F4SE/Plugins/PeekOnly.dll` and `Data/F4SE/Plugins/PeekOnly.ini`.
+5. Launch Fallout 4 through F4SE and check `Documents/My Games/Fallout4/F4SE/PeekOnly.log` for initialization messages.
 
-## Planned Vortex layout
+## Configuration
 
-The eventual package will place `PeekOnly.dll` and `PeekOnly.ini` at `Data/F4SE/Plugins/`. Dependencies are expected to include F4SE 0.6.23, and possibly the matching Address Library depending on the final hook/API strategy.
+Edit `Data/F4SE/Plugins/PeekOnly.ini` (or Vortex's mod staging copy) and redeploy.
+
+- `Enabled`: master toggle.
+- `AimOnly`: require the configured aim key.
+- `DetectDistance`, `FullDistance`: forward wall range in game units.
+- `SideProbe`: lateral corner test offset.
+- `CameraOffset`: maximum lateral view movement.
+- `FadeIn`, `FadeOut`: smoothing speeds.
+- `Aim`, `Left`, `Right`: decimal Win32 virtual-key values (defaults: right mouse 2, A 65, D 68).
+
+## Current limitations
+
+This is a first implementation, not yet confirmed in a live game. It moves the camera only; it does not yet reproduce the source mod's weapon yaw/cant, camera roll, or MCM. Corner detection and the chosen left/right sign must be checked in-game. Disable the mod in Vortex if the camera behaves unexpectedly.
+
+## Build
+
+The repository's Windows GitHub Actions workflow builds with XMake/CommonLibF4 and packages a Vortex ZIP. Source is independent and clean-room; the original archive is not redistributed.
+
