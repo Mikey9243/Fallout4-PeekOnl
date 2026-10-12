@@ -1,7 +1,11 @@
+#define NOMINMAX
 #include "pch.h"
 
 #include <MinHook.h>
 #include <Windows.h>
+#undef min
+#undef max
+#undef ERROR
 
 #include <algorithm>
 #include <atomic>
@@ -146,8 +150,9 @@ namespace
 
         auto* player = RE::PlayerCharacter::GetSingleton();
         auto* root = camera->cameraRoot.get();
-        const bool firstPerson = camera->QCameraEquals(RE::CameraState::kFirstPerson) ||
-            camera->QCameraEquals(RE::CameraState::kIronSights);
+        auto* playerCamera = static_cast<RE::PlayerCamera*>(camera);
+        const bool firstPerson = playerCamera->QCameraEquals(RE::CameraState::kFirstPerson) ||
+            playerCamera->QCameraEquals(RE::CameraState::kIronSights);
         const bool aiming = IsDown(g_aimKey.load());
         if (!g_enabled.load() || !firstPerson || !player || !root || (g_aimOnly.load() && !aiming)) {
             const float blend = 1.0F - std::exp(-g_fadeOut * dt);
