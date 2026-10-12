@@ -43,12 +43,11 @@ jobs:
           Copy-Item -LiteralPath $dll.FullName -Destination $pluginDir
           Copy-Item -LiteralPath 'Data/F4SE/Plugins/PeekOnly.ini' -Destination $pluginDir
           Copy-Item -LiteralPath 'README.md' -Destination 'package/README.md'
-          Compress-Archive -Path 'package/*' -DestinationPath 'PeekOnly-Vortex.zip' -Force
 
       - name: Upload Vortex archive
         uses: actions/upload-artifact@v4
         with:
           name: PeekOnly-Vortex
-          path: PeekOnly-Vortex.zip
+          path: package/*
           if-no-files-found: error
 
