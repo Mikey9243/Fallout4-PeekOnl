@@ -25,7 +25,7 @@ namespace
     float g_detectDistance{ 100.0F };
     float g_fullDistance{ 30.0F };
     float g_sideProbe{ 60.0F };
-    float g_cameraOffset{ 60.0F };
+    float g_cameraOffset{ 90.0F };
     float g_fadeIn{ 4.0F };
     float g_fadeOut{ 6.0F };
     float g_strength{};
@@ -91,7 +91,7 @@ namespace
         g_detectDistance = std::max(1.0F, getFloat(L"DetectDistance", 100.0F));
         g_fullDistance = std::clamp(getFloat(L"FullDistance", 30.0F), 0.0F, g_detectDistance - 0.01F);
         g_sideProbe = std::max(1.0F, getFloat(L"SideProbe", 60.0F));
-        g_cameraOffset = std::max(0.0F, getFloat(L"CameraOffset", 60.0F));
+        g_cameraOffset = std::max(0.0F, getFloat(L"CameraOffset", 90.0F));
         g_fadeIn = std::max(0.01F, getFloat(L"FadeIn", 4.0F));
         g_fadeOut = std::max(0.01F, getFloat(L"FadeOut", 6.0F));
         REX::INFO("PeekOnly config loaded: enabled={}, aimOnly={}, detectDistance={}, cameraOffset={}",
