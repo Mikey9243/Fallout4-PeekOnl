@@ -1,5 +1,6 @@
 -- include subprojects
 includes("lib/commonlibf4")
+add_requires("minhook")
 
 set_project("PeekOnly")
 set_version("0.1.0")
@@ -16,5 +17,6 @@ target("PeekOnly")
     add_files("src/**.cpp")
     add_headerfiles("src/**.h")
     add_includedirs("src")
+    add_packages("minhook")
     set_pcxxheader("src/pch.h")
 
