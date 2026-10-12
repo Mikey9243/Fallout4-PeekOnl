@@ -15,7 +15,7 @@ jobs:
       - name: Check out project
         uses: actions/checkout@v6
 
-      - name: Check out CommonLibF4 and dependencies
+      - name: Check out CommonLibF4
         uses: actions/checkout@v6
         with:
           repository: libxse/commonlibf4
@@ -33,9 +33,22 @@ jobs:
       - name: Build plugin
         run: xmake build -y
 
-      - name: Upload plugin DLL build artifact
+      - name: Assemble Vortex archive
+        shell: pwsh
+        run: |
+          $dll = Get-ChildItem -Path build -Filter PeekOnly.dll -File -Recurse | Select-Object -First 1
+          if (-not $dll) { throw 'PeekOnly.dll was not produced' }
+          $pluginDir = Join-Path $PWD 'package/Data/F4SE/Plugins'
+          New-Item -ItemType Directory -Path $pluginDir -Force | Out-Null
+          Copy-Item -LiteralPath $dll.FullName -Destination $pluginDir
+          Copy-Item -LiteralPath 'Data/F4SE/Plugins/PeekOnly.ini' -Destination $pluginDir
+          Copy-Item -LiteralPath 'README.md' -Destination 'package/README.md'
+          Compress-Archive -Path 'package/*' -DestinationPath 'PeekOnly-Vortex.zip' -Force
+
+      - name: Upload Vortex archive
         uses: actions/upload-artifact@v4
         with:
-          name: PeekOnly-Windows-x64
-          path: build/**/PeekOnly.dll
+          name: PeekOnly-Vortex
+          path: PeekOnly-Vortex.zip
           if-no-files-found: error
+
