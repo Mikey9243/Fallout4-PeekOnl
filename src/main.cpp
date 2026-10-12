@@ -114,7 +114,7 @@ namespace
             return;
         }
 
-        const float sideOffset = std::min(g_sideProbe, 48.0F);
+        const float sideOffset = g_sideProbe;
         const auto leftStart = Add(position, Scale(right, -sideOffset));
         const auto rightStart = Add(position, Scale(right, sideOffset));
         float leftFraction{};
@@ -124,7 +124,7 @@ namespace
 
         // A corner is accepted only when the forward ray meets a near wall and
         // one shoulder lane has visibly more clearance than the other.
-        const float openThreshold = centerFraction + (g_sideProbe / g_detectDistance);
+        const float openThreshold = centerFraction + (sideOffset / g_detectDistance);
         const bool leftOpen = !leftBlocked || leftFraction > openThreshold;
         const bool rightOpen = !rightBlocked || rightFraction > openThreshold;
         if (leftOpen == rightOpen) {
@@ -171,8 +171,8 @@ namespace
             g_lastProbe = now;
         }
 
-        const bool towardWall = (g_cachedSide < 0 && IsDown(g_leftKey.load())) ||
-            (g_cachedSide > 0 && IsDown(g_rightKey.load()));
+        const bool towardWall = (g_cachedSide < 0 && IsDown(g_rightKey.load())) ||
+            (g_cachedSide > 0 && IsDown(g_leftKey.load()));
         float target = 0.0F;
         if (g_cachedCorner && !towardWall) {
             target = Clamp01((g_detectDistance - g_cachedWallDistance) /
