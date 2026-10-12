@@ -146,7 +146,8 @@ namespace
 
         auto* player = RE::PlayerCharacter::GetSingleton();
         auto* root = camera->cameraRoot.get();
-        const bool firstPerson = camera->QCameraEquals(RE::CameraState::kFirstPerson);
+        const bool firstPerson = camera->QCameraEquals(RE::CameraState::kFirstPerson) ||
+            camera->QCameraEquals(RE::CameraState::kIronSights);
         const bool aiming = IsDown(g_aimKey.load());
         if (!g_enabled.load() || !firstPerson || !player || !root || (g_aimOnly.load() && !aiming)) {
             const float blend = 1.0F - std::exp(-g_fadeOut * dt);
@@ -155,8 +156,9 @@ namespace
         }
 
         const auto rotation = root->GetWorldRotate();
-        const auto forward = rotation * RE::NiPoint3{ 0.0F, 1.0F, 0.0F };
-        const auto right = rotation * RE::NiPoint3{ 1.0F, 0.0F, 0.0F };
+        // The camera root's second matrix row is its forward axis in FO4.
+        const RE::NiPoint3 forward{ rotation[1][0], rotation[1][1], rotation[1][2] };
+        const RE::NiPoint3 right{ rotation[0][0], rotation[0][1], rotation[0][2] };
         const auto position = root->GetWorldTranslate();
         auto* cell = player->GetParentCell();
         if (now - g_lastProbe >= 50 || g_lastProbe == 0) {
