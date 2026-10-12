@@ -1,0 +1,41 @@
+name: Windows plugin build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v6
+
+      - name: Check out CommonLibF4
+        uses: actions/checkout@v6
+        with:
+          repository: libxse/commonlibf4
+          path: lib/commonlibf4
+
+      - name: Set up XMake
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+
+      - name: Configure x64 Windows release
+        run: xmake f -p windows -a x64 -m release
+
+      - name: Build plugin
+        run: xmake build -y
+
+      - name: Upload plugin DLL build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PeekOnly-Windows-x64
+          path: build/**/PeekOnly.dll
+          if-no-files-found: error
+
