@@ -26,6 +26,7 @@ namespace
     float g_fullDistance{ 30.0F };
     float g_sideProbe{ 60.0F };
     float g_cameraOffset{ 90.0F };
+    float g_cameraTilt{ 7.0F };
     float g_fadeIn{ 4.0F };
     float g_fadeOut{ 6.0F };
     float g_strength{};
@@ -92,6 +93,7 @@ namespace
         g_fullDistance = std::clamp(getFloat(L"FullDistance", 30.0F), 0.0F, g_detectDistance - 0.01F);
         g_sideProbe = std::max(1.0F, getFloat(L"SideProbe", 60.0F));
         g_cameraOffset = std::max(0.0F, getFloat(L"CameraOffset", 90.0F));
+        g_cameraTilt = std::clamp(getFloat(L"CameraTilt", 7.0F), -20.0F, 20.0F);
         g_fadeIn = std::max(0.01F, getFloat(L"FadeIn", 4.0F));
         g_fadeOut = std::max(0.01F, getFloat(L"FadeOut", 6.0F));
         REX::INFO("PeekOnly config loaded: enabled={}, aimOnly={}, detectDistance={}, cameraOffset={}",
@@ -195,6 +197,21 @@ namespace
         // This runs after the game's TESCamera update has authored the base
         // transform, so the lateral shift is freshly based each frame.
         root->SetWorldTranslate(Add(position, offset));
+
+        // Roll the view toward the same side as the peek. Start with the
+        // game's fresh rotation every frame so the angle never accumulates.
+        const float tiltRadians = g_cachedSide * g_cameraTilt * g_strength *
+            (3.14159265358979323846F / 180.0F);
+        if (std::abs(tiltRadians) > 0.0001F) {
+            const float cosine = std::cos(tiltRadians);
+            const float sine = std::sin(tiltRadians);
+            auto tiltedRotation = rotation;
+            for (std::size_t axis = 0; axis < 3; ++axis) {
+                tiltedRotation[0][axis] = rotation[0][axis] * cosine - rotation[2][axis] * sine;
+                tiltedRotation[2][axis] = rotation[0][axis] * sine + rotation[2][axis] * cosine;
+            }
+            root->SetWorldRotate(tiltedRotation);
+        }
     }
 
     [[nodiscard]] bool InstallCameraHook() noexcept
